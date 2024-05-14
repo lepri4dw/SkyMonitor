@@ -1,78 +1,67 @@
 package model;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "flights")
 public class Flight {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    
     @Column(name = "flight_number")
     private String flightNumber;
 
+    
     @Column(name = "departure_city")
     private String departureCity;
+
+
+    @Column(name = "airport")
+    private String airport;
+
 
     @Column(name = "destination_city")
     private String destinationCity;
 
+
     @Column(name = "departure_time")
     private String departureTime;
+
 
     @Column(name = "arrival_time")
     private String arrivalTime;
 
-    // Конструкторы, геттеры и сеттеры
+
+    @Column(name = "airline")
+    private String airline;
+
+
+    @Column(name = "aircraft_type")
+    private String aircraftType;
+
+
+    @Column(name = "gate")
+    private String gate;
 
     public Flight() {
     }
 
-    public Flight(String flightNumber, String departureCity, String destinationCity, String departureTime, String arrivalTime) {
+    public Flight(String flightNumber, String departureCity, String airport, String destinationCity, String departureTime, String arrivalTime,
+                  String airline, String aircraftType, String gate) {
         this.flightNumber = flightNumber;
         this.departureCity = departureCity;
+        this.airport = airport;
         this.destinationCity = destinationCity;
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
-    }
-
-    public String getFlightNumber() {
-        return flightNumber;
-    }
-
-    public void setFlightNumber(String flightNumber) {
-        this.flightNumber = flightNumber;
-    }
-
-    public String getDepartureCity() {
-        return departureCity;
-    }
-
-    public void setDepartureCity(String departureCity) {
-        this.departureCity = departureCity;
-    }
-
-    public String getDestinationCity() {
-        return destinationCity;
-    }
-
-    public void setDestinationCity(String destinationCity) {
-        this.destinationCity = destinationCity;
-    }
-
-    public String getDepartureTime() {
-        return departureTime;
-    }
-
-    public void setDepartureTime(String departureTime) {
-        this.departureTime = departureTime;
-    }
-
-    public String getArrivalTime() {
-        return arrivalTime;
-    }
-
-    public void setArrivalTime(String arrivalTime) {
-        this.arrivalTime = arrivalTime;
+        this.airline = airline;
+        this.aircraftType = aircraftType;
+        this.gate = gate;
     }
 }
