@@ -6,12 +6,16 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import java.util.List;
+import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class Main {
 
     private static final int HEADER_HEIGHT = 23;
+    private static int option = 0;
+    private static String departureCityInput = "";
+
     public static void main(String[] args) {
         @SuppressWarnings("unused")
         org.jboss.logging.Logger logger = org.jboss.logging.Logger.getLogger("org.hibernate");
@@ -34,6 +38,18 @@ public class Main {
 //        session.save(flight3);
 //
 //        session.getTransaction().commit();
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Choose an option:");
+        System.out.println("1. Display all flights");
+        System.out.println("2. Display flights by departure city (Enter city)");
+
+        option = scanner.nextInt();
+        if (option == 2) {
+            System.out.print("Enter departure city: ");
+            departureCityInput = scanner.next();
+        }
 
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -61,7 +77,17 @@ public class Main {
 
                     session = sessionFactory.getCurrentSession();
                     session.beginTransaction();
-                    List<Flight> flights = session.createQuery("from Flight").getResultList();
+                    List<Flight> flights;
+                    if (option == 1) {
+                        flights = session.createQuery("from Flight").getResultList();
+                    } else if (option == 2) {
+                        flights = session.createQuery("from Flight where departureCity = :depCity")
+                                .setParameter("depCity", departureCityInput)
+                                .getResultList();
+                    } else {
+                        System.out.println("Invalid option.");
+                        return;
+                    }
 
                     printFlights(flights);
 
@@ -70,7 +96,7 @@ public class Main {
                     session.close();
                 }
             }
-        }, 0, 3000);
+        }, 0, 10000);
     }
 
     private static void printFlights(List<Flight> flights) {
