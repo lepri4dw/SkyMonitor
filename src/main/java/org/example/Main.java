@@ -14,7 +14,7 @@ public class Main {
 
     private static final int HEADER_HEIGHT = 23;
     private static int option = 0;
-    private static String departureCityInput = "";
+    private static String input = "";
 
     public static void main(String[] args) {
         @SuppressWarnings("unused")
@@ -26,96 +26,127 @@ public class Main {
                 .addAnnotatedClass(Flight.class)
                 .buildSessionFactory();
 
-//        Session session = sessionFactory.getCurrentSession();
-//        session.beginTransaction();
-//
-//        Flight flight1 = new Flight("SU101", "Moscow", "Sheremetyevo", "New York", "10:00", "16:00", "Aeroflot", "Boeing 777", "D23");
-//        Flight flight2 = new Flight("LH202", "Berlin", "Berlin Tegel", "London", "12:00", "14:00", "Lufthansa", "Airbus A320", "B12");
-//        Flight flight3 = new Flight("BA303", "Paris", "Charles de Gaulle", "Tokyo", "14:00", "08:00", "British Airways", "Boeing 787", "C5");
-//
-//        session.save(flight1);
-//        session.save(flight2);
-//        session.save(flight3);
-//
-//        session.getTransaction().commit();
-
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Choose an option:");
-        System.out.println("1. Display all flights");
-        System.out.println("2. Display flights by departure city (Enter city)");
+        while (true) {
+            System.out.println("Choose an option:");
+            System.out.println("1. Display all flights");
+            System.out.println("2. Display flights by departure city");
+            System.out.println("3. Display flights by destination city");
+            System.out.println("4. Display flights by airline");
+            System.out.println("5. Display flights by status");
+            System.out.println("6. Display flights by departure date");
+            System.out.println("7. Display flights by arrival date");
+            System.out.println("8. Exit");
 
-        option = scanner.nextInt();
-        if (option == 2) {
-            System.out.print("Enter departure city: ");
-            departureCityInput = scanner.next();
-        }
+            option = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
 
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                Session session = sessionFactory.getCurrentSession();
-                try {
-                    session.beginTransaction();
-
-                    String flightNumber = RandomFlightDataGenerator.generateFlightNumber();
-                    String departureCity = RandomFlightDataGenerator.generateCity();
-                    String departureAirport = RandomFlightDataGenerator.generateAirport();
-                    String destinationCity = RandomFlightDataGenerator.generateCity();
-                    String departureTime = RandomFlightDataGenerator.generateTime();
-                    String arrivalTime = RandomFlightDataGenerator.generateTime();
-                    String airline = RandomFlightDataGenerator.generateAirline();
-                    String aircraftType = RandomFlightDataGenerator.generateAircraftType();
-                    String gate = RandomFlightDataGenerator.generateGate();
-
-                    Flight newFlight = new Flight(flightNumber, departureCity, departureAirport,
-                            destinationCity, departureTime, arrivalTime, airline, aircraftType, gate);
-
-                    session.save(newFlight);
-                    session.getTransaction().commit();
-
-                    session = sessionFactory.getCurrentSession();
-                    session.beginTransaction();
-                    List<Flight> flights;
-                    if (option == 1) {
-                        flights = session.createQuery("from Flight").getResultList();
-                    } else if (option == 2) {
-                        flights = session.createQuery("from Flight where departureCity = :depCity")
-                                .setParameter("depCity", departureCityInput)
-                                .getResultList();
-                    } else {
-                        System.out.println("Invalid option.");
-                        return;
-                    }
-
-                    printFlights(flights);
-
-                    session.getTransaction().commit();
-                } finally {
-                    session.close();
-                }
+            if (option == 8) {
+                System.out.println("Exiting...");
+                sessionFactory.close();
+                scanner.close();
+                System.exit(0);
             }
-        }, 0, 10000);
+
+            if (option >= 2 && option <= 7) {
+                System.out.print("Enter search term: ");
+                input = scanner.nextLine();
+            }
+
+            Timer timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    Session session = sessionFactory.getCurrentSession();
+                    try {
+                        session.beginTransaction();
+
+                        String flightNumber = RandomFlightDataGenerator.generateFlightNumber();
+                        String departureCity = RandomFlightDataGenerator.generateCity();
+                        String destinationCity = RandomFlightDataGenerator.generateCity();
+                        String departureDate = RandomFlightDataGenerator.generateDate();
+                        String departureTime = RandomFlightDataGenerator.generateTime();
+                        String arrivalDate = RandomFlightDataGenerator.generateDate();
+                        String arrivalTime = RandomFlightDataGenerator.generateTime();
+                        String airline = RandomFlightDataGenerator.generateAirline();
+                        String flightStatus = RandomFlightDataGenerator.generateStatus();
+
+                        Flight newFlight = new Flight(airline, flightNumber, departureCity, destinationCity, departureDate, departureTime, flightStatus, arrivalDate, arrivalTime);
+
+                        session.save(newFlight);
+                        session.getTransaction().commit();
+
+                        session = sessionFactory.getCurrentSession();
+                        session.beginTransaction();
+                        List<Flight> flights;
+
+                        switch (option) {
+                            case 1:
+                                flights = session.createQuery("from Flight").getResultList();
+                                break;
+                            case 2:
+                                flights = session.createQuery("from Flight where departureCity = :param")
+                                        .setParameter("param", input)
+                                        .getResultList();
+                                break;
+                            case 3:
+                                flights = session.createQuery("from Flight where destinationCity = :param")
+                                        .setParameter("param", input)
+                                        .getResultList();
+                                break;
+                            case 4:
+                                flights = session.createQuery("from Flight where aviaCompany = :param")
+                                        .setParameter("param", input)
+                                        .getResultList();
+                                break;
+                            case 5:
+                                flights = session.createQuery("from Flight where flightStatus = :param")
+                                        .setParameter("param", input)
+                                        .getResultList();
+                                break;
+                            case 6:
+                                flights = session.createQuery("from Flight where departureDate = :param")
+                                        .setParameter("param", input)
+                                        .getResultList();
+                                break;
+                            case 7:
+                                flights = session.createQuery("from Flight where arrivalDate = :param")
+                                        .setParameter("param", input)
+                                        .getResultList();
+                                break;
+                            default:
+                                System.out.println("Invalid option.");
+                                return;
+                        }
+
+                        printFlights(flights);
+
+                        session.getTransaction().commit();
+                    } finally {
+                        session.close();
+                    }
+                }
+            }, 0, 10000);
+        }
     }
 
     private static void printFlights(List<Flight> flights) {
         for (int i = 0; i < 20; ++i) System.out.println();
 
-        System.out.printf("%-10s | %-25s | %-25s | %-20s | %-20s | %-20s | %-15s | %-5s%n",
-                "Flight", "Departure city (Airport)", "Destination city", "Departure time", "Arrival time",
-                "Airline", "Aircraft Type", "Gate");
-        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.printf("%-10s | %-20s | %-20s | %-15s | %-15s | %-15s | %-10s | %-10s | %-10s%n",
+                "Flight", "Departure city", "Destination city", "Departure date", "Departure time", "Arrival date", "Arrival time", "Airline", "Status");
+        System.out.println("----------------------------------------------------------------------------------------------------------------------------------------------------------");
 
         int startIndex = Math.max(0, flights.size() - 10);
 
         for (int i = flights.size() - 1; i >= startIndex; i--) {
             Flight flight = flights.get(i);
-            System.out.printf("%-10s | %-25s | %-25s | %-20s | %-20s | %-20s | %-15s | %-5s%n",
-                    flight.getFlightNumber(), flight.getDepartureCity() + " (" + flight.getAirport() + ")",
-                    flight.getDestinationCity(), flight.getDepartureTime(),
-                    flight.getArrivalTime(), flight.getAirline(),
-                    flight.getAircraftType(), flight.getGate());
+            System.out.printf("%-10s | %-20s | %-20s | %-15s | %-15s | %-15s | %-10s | %-10s | %-10s%n",
+                    flight.getFlightNumber(), flight.getDepartureCity(), flight.getDestinationCity(),
+                    flight.getDepartureDate(), flight.getDepartureTime(),
+                    flight.getArrivalDate(), flight.getArrivalTime(),
+                    flight.getAviaCompany(), flight.getFlightStatus());
         }
         System.out.println();
         moveCursorUp(HEADER_HEIGHT + flights.size());

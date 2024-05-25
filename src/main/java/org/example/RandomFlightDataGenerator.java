@@ -8,6 +8,7 @@ public class RandomFlightDataGenerator {
     private static final String[] airlines = {"Aeroflot", "Lufthansa", "British Airways", "Air France", "Emirates", "Qatar Airways", "Turkish Airlines", "American Airlines", "Delta Air Lines", "United Airlines"};
     private static final String[] aircraftTypes = {"Boeing 777", "Airbus A320", "Boeing 787", "Airbus A380", "Boeing 737", "Airbus A350", "Boeing 747", "Embraer E190", "Bombardier CRJ900", "Airbus A330"};
     private static final String[] gates = {"A1", "B2", "C3", "D4", "E5", "F6", "G7", "H8", "I9", "J10"};
+    private static final String[] statuses = {"On Time", "Delayed", "Cancelled"};
 
     private static final Random random = new Random();
 
@@ -40,5 +41,15 @@ public class RandomFlightDataGenerator {
         int minute = random.nextInt(60);
         return String.format("%02d:%02d", hour, minute);
     }
-}
 
+    public static String generateStatus() {
+        return statuses[random.nextInt(statuses.length)];
+    }
+
+    public static String generateDate() {
+        int year = 2024;
+        int month = random.nextInt(12) + 1;
+        int day = random.nextInt(28) + 1; // To simplify, assuming all months have 28 days
+        return String.format("%04d-%02d-%02d", year, month, day);
+    }
+}
