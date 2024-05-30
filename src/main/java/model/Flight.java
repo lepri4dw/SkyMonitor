@@ -1,7 +1,12 @@
 package model;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
 @Entity
+@Setter
+@Getter
 @Table(name = "flights")
 public class Flight {
     @Id
@@ -49,74 +54,6 @@ public class Flight {
         this.departureTime = departureTime;
         this.flightStatus = flightStatus;
         this.arrivalDate = arrivalDate;
-        this.arrivalTime = arrivalTime;
-    }
-
-    public String getAviaCompany() {
-        return aviaCompany;
-    }
-
-    public void setAviaCompany(String aviaCompany) {
-        this.aviaCompany = aviaCompany;
-    }
-    public String getFlightNumber() {
-        return flightNumber;
-    }
-
-    public void setFlightNumber(String flightNumber) {
-        this.flightNumber = flightNumber;
-    }
-
-    public String getDepartureCity() {
-        return departureCity;
-    }
-
-    public void setDepartureCity(String departureCity) {
-        this.departureCity = departureCity;
-    }
-
-    public String getDestinationCity() {
-        return destinationCity;
-    }
-
-    public void setDestinationCity(String destinationCity) {
-        this.destinationCity = destinationCity;
-    }
-
-    public String getDepartureDate() {
-        return departureDate;
-    }
-
-    public void setDepartureDate(String departureDate) {
-        this.departureDate = departureDate;
-    }
-    public String getDepartureTime() {
-        return departureTime;
-    }
-
-    public void setDepartureTime(String departureTime) {
-        this.departureTime = departureTime;
-    }
-    public String getFlightStatus() {
-        return flightStatus;
-    }
-
-    public void setFlightStatus(String flightStatus) {
-        this.flightStatus = flightStatus;
-    }
-    public String getArrivalTime() {
-        return arrivalTime;
-    }
-
-    public String getArrivalDate() {
-        return arrivalDate;
-    }
-
-    public void setArrivalDate(String arrivalDate) {
-        this.arrivalDate = arrivalDate;
-    }
-
-    public void setArrivalTime(String arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
 }
